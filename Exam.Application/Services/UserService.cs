@@ -9,6 +9,7 @@ using Exam.Domain.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Exam.Application.Services
@@ -97,6 +98,8 @@ namespace Exam.Application.Services
             //marking the oldest user on the result set.
             pagedResult.Data.MarkOldestUser();
 
+            //pagedResult.Data.MarkMinInList(c => c.BirthDate, d => d.IsOldest);
+
             return pagedResult;
         }
 
@@ -166,6 +169,31 @@ namespace Exam.Application.Services
                 //set the property for the oldest user
                 users.FirstOrDefault(u => u.Uuid == userId).IsOldest = true;
                           
+        }
+
+        public static void MarkMinInList<T, F, C>(this List<T> list, Func<T, F> fieldToCompare, Expression<Func<T, C>> fieldToMark) where F : IComparable
+        {
+
+            if (list.Any() == false)
+                return;
+
+            T maxValue = list.First();
+            int idxMax = list.IndexOf(maxValue);
+
+            var expressionToMark = (MemberExpression)fieldToMark.Body;
+            string namePropertyToMark = expressionToMark.Member.Name;
+
+            list.ForEach(usr =>
+            {
+                if (fieldToCompare(usr).CompareTo(fieldToCompare(maxValue)) < 0)
+                {
+                    maxValue = usr;
+                    idxMax = list.IndexOf(usr);
+                }
+
+            });
+
+            list[idxMax].GetType().GetProperty(namePropertyToMark).SetValue(list[idxMax], true);
         }
     }
 }
