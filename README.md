@@ -39,4 +39,6 @@ This layer contains a xUnit Project for Unit Testing.
 ## Algorithm for Oldest User
 To accomplish this feature, I did an extension method for the List of Users and search the oldest user in the result set(already paged) comparing with a max value initialized with the Date of Today, when I found the oldest user mark the user with a boolean flag with true value.
 
+I left a new algorithm with Generics, but because I did out of time box, I left commented, but the code is there, below the oldest code.
+Thank you!
 
